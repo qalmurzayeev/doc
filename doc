@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HealthyLife - Персональный тренер и врач</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#3176FF',secondary:'#E8F2FF'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+.screen { display: none; }
+.screen.active { display: block; }
+.chat-message { animation: fadeInUp 0.3s ease-out; }
+@keyframes fadeInUp {
+from { opacity: 0; transform: translateY(20px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.pulse-animation { animation: pulse 2s infinite; }
+@keyframes pulse {
+0%, 100% { transform: scale(1); }
+50% { transform: scale(1.05); }
+}
+</style>
+</head>
+<body class="bg-white min-h-screen">
+<div class="w-full max-w-sm mx-auto bg-white min-h-screen relative">
+<!-- Экран регистрации -->
+<div id="registration-screen" class="screen active px-6 py-8 min-h-screen flex flex-col">
+<div class="flex-1 flex flex-col justify-center">
+<div class="text-center mb-8">
+<img src="https://readdy.ai/api/search-image?query=Healthy%20lifestyle%20illustration%20featuring%20fresh%20fruits%2C%20vegetables%2C%20fitness%20equipment%2C%20and%20wellness%20symbols%20in%20a%20modern%20minimalist%20style%20with%20soft%20blue%20and%20green%20colors%2C%20clean%20background%2C%20professional%20health%20app%20design%2C%20vibrant%20and%20motivating%20atmosphere&width=300&height=200&seq=health-hero&orientation=landscape"
+alt="Здоровый образ жизни" class="w-full h-48 object-cover rounded-xl mb-6">
+<h1 class="text-3xl font-['Pacifico'] text-primary mb-2">logo</h1>
+<p class="text-gray-600 text-sm">Ваш персональный тренер и врач</p>
+</div>
+<div class="space-y-6">
+<h2 class="text-2xl font-semibold text-gray-900 text-center mb-8">Расскажите о себе</h2>
+<div class="space-y-4">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Ваше имя</label>
+<input type="text" id="user-name" placeholder="Введите ваше имя"
+class="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Возраст</label>
+<input type="number" id="user-age" placeholder="Введите ваш возраст" min="1" max="120"
+class="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Вес</label>
+<div class="relative">
+<input type="number" id="user-weight" placeholder="Введите ваш вес" min="30" max="300"
+class="w-full px-4 py-3 pr-12 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+<span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">кг</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<button id="continue-btn" class="w-full bg-primary text-white py-4 !rounded-button font-medium text-lg mt-8 cursor-pointer">
+Продолжить
+</button>
+</div>
+<!-- Главный экран -->
+<div id="main-screen" class="screen">
+<!-- Верхняя панель -->
+<div class="fixed top-0 left-1/2 transform -translate-x-1/2 w-full max-w-sm bg-white z-10 px-4 py-4 border-b border-gray-100">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-base font-medium text-gray-900" id="welcome-text">Привет, канат!</h1>
+<p class="text-sm text-gray-600">Готовы к анализу питания?</p>
+</div>
+<div class="w-9 h-9 bg-primary rounded-full flex items-center justify-center cursor-pointer" id="profile-btn">
+<i class="ri-user-line text-white"></i>
+</div>
+</div>
+</div>
+<!-- Основной контент -->
+<div class="pt-24 pb-24 px-6 min-h-screen">
+<!-- Кнопка камеры -->
+<div class="text-center mb-8">
+<div class="relative inline-block">
+<button id="camera-btn" class="w-24 h-24 bg-primary rounded-full flex items-center justify-center shadow-md cursor-pointer">
+<i class="ri-camera-line text-white text-3xl"></i>
+</button>
+<div class="absolute -bottom-1 -right-1 w-7 h-7 bg-green-500 rounded-full flex items-center justify-center shadow-sm">
+<i class="ri-add-line text-white"></i>
+</div>
+</div>
+<p class="text-gray-600 mt-3 text-sm">Сфотографируйте вашу еду для анализа еды</p>
+</div>
+<!-- Последние анализы -->
+<div class="mb-8">
+<h3 class="text-base font-medium text-gray-900 mb-4">Последние анализы</h3>
+<div class="space-y-3" id="recent-analyses">
+<div class="bg-white rounded-xl p-3 border border-gray-100">
+<div class="flex items-center space-x-3">
+<img src="https://readdy.ai/api/search-image?query=Healthy%20grilled%20chicken%20salad%20with%20fresh%20vegetables%2C%20colorful%20presentation%2C%20restaurant%20quality%20food%20photography%2C%20clean%20white%20background%2C%20appetizing%20and%20nutritious%20meal&width=64&height=64&seq=food-1&orientation=squarish"
+alt="Салат с курицей" class="w-14 h-14 rounded-lg object-cover">
+<div class="flex-1">
+<h4 class="font-medium text-gray-900">Салат с курицей</h4>
+<p class="text-sm text-gray-500">320 ккал</p>
+<div class="flex items-center mt-1">
+<div class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></div>
+<span class="text-xs text-green-600">Полезно</span>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xs text-gray-400">2 часа назад</p>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+<div class="flex items-center space-x-4">
+<img src="https://readdy.ai/api/search-image?query=Fresh%20fruit%20smoothie%20bowl%20with%20berries%2C%20banana%2C%20granola%20and%20nuts%2C%20colorful%20healthy%20breakfast%2C%20clean%20white%20background%2C%20appetizing%20presentation%2C%20nutritious%20meal&width=80&height=80&seq=food-2&orientation=squarish"
+alt="Смузи боул" class="w-16 h-16 rounded-lg object-cover">
+<div class="flex-1">
+<h4 class="font-medium text-gray-900">Смузи боул</h4>
+<p class="text-sm text-gray-600">280 ккал</p>
+<div class="flex items-center mt-1">
+<div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+<span class="text-xs text-green-600">Очень полезно</span>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xs text-gray-500">Вчера</p>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+<div class="flex items-center space-x-4">
+<img src="https://readdy.ai/api/search-image?query=Cheeseburger%20with%20french%20fries%2C%20fast%20food%20meal%2C%20restaurant%20presentation%2C%20clean%20white%20background%2C%20detailed%20food%20photography%2C%20indulgent%20comfort%20food&width=80&height=80&seq=food-3&orientation=squarish"
+alt="Бургер с картошкой" class="w-16 h-16 rounded-lg object-cover">
+<div class="flex-1">
+<h4 class="font-medium text-gray-900">Бургер с картошкой</h4>
+<p class="text-sm text-gray-600">850 ккал</p>
+<div class="flex items-center mt-1">
+<div class="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+<span class="text-xs text-red-600">Вредно</span>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xs text-gray-500">2 дня назад</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Рекомендации -->
+<div class="bg-secondary rounded-xl p-4">
+<h3 class="text-lg font-semibold text-gray-900 mb-3">Персональные рекомендации</h3>
+<div class="space-y-3">
+<div class="flex items-start space-x-3">
+<div class="w-6 h-6 bg-primary rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+<i class="ri-lightbulb-line text-white text-xs"></i>
+</div>
+<p class="text-sm text-gray-700">Увеличьте потребление белка до 1.2 г на кг веса для лучшего восстановления мышц</p>
+</div>
+<div class="flex items-start space-x-3">
+<div class="w-6 h-6 bg-primary rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+<i class="ri-heart-line text-white text-xs"></i>
+</div>
+<p class="text-sm text-gray-700">Добавьте больше овощей в рацион - стремитесь к 400-500 г в день</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Нижняя навигация -->
+<div class="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-sm bg-white border-t border-gray-100">
+<div class="grid grid-cols-3 gap-0">
+<button class="flex flex-col items-center justify-center py-3 cursor-pointer" id="home-tab">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-home-fill text-primary"></i>
+</div>
+<span class="text-[10px] text-primary mt-1">Главная</span>
+</button>
+<button class="flex flex-col items-center justify-center py-3 cursor-pointer" id="camera-tab">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-camera-line text-gray-400"></i>
+</div>
+<span class="text-[10px] text-gray-400 mt-1">Камера</span>
+</button>
+<button class="flex flex-col items-center justify-center py-3 cursor-pointer" id="chat-tab">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-chat-3-line text-gray-400"></i>
+</div>
+<span class="text-[10px] text-gray-400 mt-1">Помощник</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Экран чата -->
+<div id="chat-screen" class="screen">
+<!-- Верхняя панель чата -->
+<div class="fixed top-0 left-1/2 transform -translate-x-1/2 w-full max-w-sm bg-white z-10 px-6 py-4 border-b border-gray-100">
+<div class="flex items-center space-x-3">
+<button id="back-btn" class="w-8 h-8 flex items-center justify-center cursor-pointer">
+<i class="ri-arrow-left-line text-gray-600 text-lg"></i>
+</button>
+<div class="flex-1">
+<h1 class="text-lg font-semibold text-gray-900">Ваш персональный помощник</h1>
+<p class="text-xs text-green-500">В сети</p>
+</div>
+<div class="w-10 h-10 bg-gradient-to-br from-primary to-blue-600 rounded-full flex items-center justify-center">
+<i class="ri-robot-line text-white text-lg"></i>
+</div>
+</div>
+</div>
+<!-- Область чата -->
+<div class="pt-20 pb-32 px-4 min-h-screen bg-gray-50">
+<div id="chat-messages" class="space-y-4 mb-6">
+<!-- Приветственное сообщение -->
+<div class="flex items-start space-x-3 chat-message">
+<div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+<i class="ri-robot-line text-white text-sm"></i>
+</div>
+<div class="bg-white rounded-xl rounded-tl-sm px-4 py-3 max-w-xs shadow-sm">
+<p class="text-sm text-gray-800">Привет! Я ваш персональный помощник по здоровью. Готов ответить на любые вопросы о питании, тренировках и здоровом образе жизни! 😊</p>
+</div>
+</div>
+</div>
+<!-- Быстрые вопросы -->
+<div class="mb-6">
+<p class="text-xs text-gray-500 mb-3 px-2">Популярные вопросы:</p>
+<div class="flex flex-wrap gap-2">
+<button class="quick-question bg-white border border-gray-200 rounded-full px-4 py-2 text-sm text-gray-700 cursor-pointer" data-question="Как рассчитать суточную норму калорий?">
+Норма калорий
+</button>
+<button class="quick-question bg-white border border-gray-200 rounded-full px-4 py-2 text-sm text-gray-700 cursor-pointer" data-question="Какие продукты лучше есть после тренировки?">
+После тренировки
+</button>
+<button class="quick-question bg-white border border-gray-200 rounded-full px-4 py-2 text-sm text-gray-700 cursor-pointer" data-question="Как составить план питания для похудения?">
+План питания
+</button>
+</div>
+</div>
+</div>
+<!-- Поле ввода -->
+<div class="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-sm bg-white border-t border-gray-100 p-4">
+<div class="flex items-center space-x-3">
+<div class="flex-1 relative">
+<input type="text" id="chat-input" placeholder="Напишите ваш вопрос..."
+class="w-full pl-4 pr-12 py-3 bg-gray-100 rounded-full text-sm focus:outline-none focus:bg-white focus:ring-2 focus:ring-primary border-none">
+<button id="send-btn" class="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-primary rounded-full flex items-center justify-center cursor-pointer">
+<i class="ri-send-plane-fill text-white text-sm"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Экран камеры/анализа -->
+<div id="camera-screen" class="screen">
+<div class="fixed top-0 left-1/2 transform -translate-x-1/2 w-full max-w-sm bg-black z-10 px-6 py-4">
+<div class="flex items-center justify-between">
+<button id="camera-back-btn" class="w-8 h-8 flex items-center justify-center cursor-pointer">
+<i class="ri-arrow-left-line text-white text-lg"></i>
+</button>
+<h1 class="text-lg font-semibold text-white">Анализ еды</h1>
+<div class="w-8 h-8"></div>
+</div>
+</div>
+<div class="pt-16 bg-black min-h-screen flex flex-col">
+<div class="flex-1 flex items-center justify-center p-6">
+<div class="w-full max-w-sm aspect-square bg-gray-800 rounded-xl flex items-center justify-center">
+<div class="text-center">
+<i class="ri-camera-line text-gray-400 text-6xl mb-4"></i>
+<p class="text-gray-300 text-sm">Наведите камеру на еду</p>
+</div>
+</div>
+</div>
+<div class="p-6">
+<button id="capture-btn" class="w-16 h-16 bg-white rounded-full mx-auto flex items-center justify-center cursor-pointer">
+<div class="w-12 h-12 bg-white rounded-full border-4 border-gray-300"></div>
+</button>
+</div>
+</div>
+</div>
+</div>
+<script id="registration-logic">
+document.addEventListener('DOMContentLoaded', function() {
+const continueBtn = document.getElementById('continue-btn');
+const nameInput = document.getElementById('user-name');
+const ageInput = document.getElementById('user-age');
+const weightInput = document.getElementById('user-weight');
+continueBtn.addEventListener('click', function() {
+const name = nameInput.value.trim();
+const age = ageInput.value;
+const weight = weightInput.value;
+if (!name || !age || !weight) {
+alert('Пожалуйста, заполните все поля');
+return;
+}
+localStorage.setItem('userName', name);
+localStorage.setItem('userAge', age);
+localStorage.setItem('userWeight', weight);
+document.getElementById('registration-screen').classList.remove('active');
+document.getElementById('main-screen').classList.add('active');
+document.getElementById('welcome-text').textContent = `Привет, ${name}!`;
+});
+});
+</script>
+<script id="navigation-logic">
+document.addEventListener('DOMContentLoaded', function() {
+const screens = {
+'home-tab': 'main-screen',
+'chat-tab': 'chat-screen',
+'camera-tab': 'camera-screen'
+};
+Object.keys(screens).forEach(tabId => {
+const tab = document.getElementById(tabId);
+if (tab) {
+tab.addEventListener('click', function() {
+document.querySelectorAll('.screen').forEach(screen => {
+screen.classList.remove('active');
+});
+document.getElementById(screens[tabId]).classList.add('active');
+document.querySelectorAll('[id$="-tab"]').forEach(t => {
+const icon = t.querySelector('i');
+const text = t.querySelector('span');
+icon.className = icon.className.replace('-fill', '-line').replace('text-primary', 'text-gray-400');
+text.className = text.className.replace('text-primary', 'text-gray-400');
+});
+const activeIcon = this.querySelector('i');
+const activeText = this.querySelector('span');
+activeIcon.className = activeIcon.className.replace('-line', '-fill').replace('text-gray-400', 'text-primary');
+activeText.className = activeText.className.replace('text-gray-400', 'text-primary');
+});
+}
+});
+const backBtn = document.getElementById('back-btn');
+if (backBtn) {
+backBtn.addEventListener('click', function() {
+document.querySelectorAll('.screen').forEach(screen => {
+screen.classList.remove('active');
+});
+document.getElementById('main-screen').classList.add('active');
+});
+}
+const cameraBackBtn = document.getElementById('camera-back-btn');
+if (cameraBackBtn) {
+cameraBackBtn.addEventListener('click', function() {
+document.querySelectorAll('.screen').forEach(screen => {
+screen.classList.remove('active');
+});
+document.getElementById('main-screen').classList.add('active');
+});
+}
+});
+</script>
+<script id="chat-logic">
+document.addEventListener('DOMContentLoaded', function() {
+const chatInput = document.getElementById('chat-input');
+const sendBtn = document.getElementById('send-btn');
+const chatMessages = document.getElementById('chat-messages');
+const quickQuestions = document.querySelectorAll('.quick-question');
+const responses = {
+'Как рассчитать суточную норму калорий?': 'Для расчета суточной нормы калорий используйте формулу Харриса-Бенедикта: для мужчин BMR = 88.362 + (13.397 × вес в кг) + (4.799 × рост в см) - (5.677 × возраст). Затем умножьте на коэффициент активности (1.2-1.9).',
+'Какие продукты лучше есть после тренировки?': 'После тренировки рекомендую белково-углеводные продукты: курица с рисом, творог с бананом, протеиновый коктейль с овсянкой. Это поможет восстановить мышцы и пополнить энергию.',
+'Как составить план питания для похудения?': 'Для похудения создайте дефицит калорий 300-500 ккал от нормы. Включите: 30% белков, 40% углеводов, 30% жиров. Ешьте 4-5 раз в день небольшими порциями. Пейте 2-3 литра воды в день.'
+};
+function addMessage(text, isUser = false) {
+const messageDiv = document.createElement('div');
+messageDiv.className = `flex items-start space-x-3 chat-message ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+messageDiv.innerHTML = `
+<div class="w-8 h-8 ${isUser ? 'bg-gray-300' : 'bg-primary'} rounded-full flex items-center justify-center flex-shrink-0">
+<i class="ri-${isUser ? 'user' : 'robot'}-line text-white text-sm"></i>
+</div>
+<div class="bg-${isUser ? 'primary text-white' : 'white'} rounded-xl ${isUser ? 'rounded-tr-sm' : 'rounded-tl-sm'} px-4 py-3 max-w-xs shadow-sm">
+<p class="text-sm ${isUser ? 'text-white' : 'text-gray-800'}">${text}</p>
+</div>
+`;
+chatMessages.appendChild(messageDiv);
+chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+function sendMessage() {
+const message = chatInput.value.trim();
+if (!message) return;
+addMessage(message, true);
+chatInput.value = '';
+setTimeout(() => {
+const response = responses[message] || 'Спасибо за ваш вопрос! Я анализирую информацию и скоро дам подробный ответ. А пока рекомендую сфотографировать вашу еду для анализа калорийности.';
+addMessage(response);
+}, 1000);
+}
+sendBtn.addEventListener('click', sendMessage);
+chatInput.addEventListener('keypress', function(e) {
+if (e.key === 'Enter') {
+sendMessage();
+}
+});
+quickQuestions.forEach(btn => {
+btn.addEventListener('click', function() {
+const question = this.dataset.question;
+chatInput.value = question;
+sendMessage();
+});
+});
+});
+</script>
+<script id="camera-logic">
+document.addEventListener('DOMContentLoaded', function() {
+const cameraBtn = document.getElementById('camera-btn');
+const captureBtn = document.getElementById('capture-btn');
+cameraBtn.addEventListener('click', function() {
+document.querySelectorAll('.screen').forEach(screen => {
+screen.classList.remove('active');
+});
+document.getElementById('camera-screen').classList.add('active');
+});
+captureBtn.addEventListener('click', function() {
+const analysisResults = [
+{ name: 'Овощной салат', calories: 150, status: 'healthy', time: 'Только что' },
+{ name: 'Паста с креветками', calories: 420, status: 'moderate', time: 'Только что' },
+{ name: 'Шоколадный торт', calories: 650, status: 'unhealthy', time: 'Только что' }
+];
+const randomResult = analysisResults[Math.floor(Math.random() * analysisResults.length)];
+setTimeout(() => {
+alert(`Анализ завершен!\n\nБлюдо: ${randomResult.name}\nКалории: ${randomResult.calories} ккал\nОценка: ${randomResult.status === 'healthy' ? 'Полезно' : randomResult.status === 'moderate' ? 'Умеренно' : 'Вредно'}`);
+document.querySelectorAll('.screen').forEach(screen => {
+screen.classList.remove('active');
+});
+document.getElementById('main-screen').classList.add('active');
+}, 2000);
+});
+});
+</script>
+</body>
+</html>
